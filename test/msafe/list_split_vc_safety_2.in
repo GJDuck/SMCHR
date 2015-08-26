@@ -1,0 +1,1 @@
+sep(H, L, F) /\ reach(L, F) /\ not dom(F, xs) /\ loop(H, n, n1, xs, xs1) /\ not (n1 > 0 /\ xs1 != 0) /\ sep(H, L1, F) /\ reach(L1, F) /\ not dom(F, xs1) /\ xs1 != 0 /\ ys = xs1 /\ in(H, xs1, xs2) /\ dom(F, ys)

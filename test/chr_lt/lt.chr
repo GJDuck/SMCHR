@@ -1,0 +1,2 @@
+lt(x, y) /\ lt(y, x) ==> false;
+lt(x, y) /\ lt(y, z) ==> lt(x, z);

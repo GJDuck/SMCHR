@@ -1,0 +1,1 @@
+(one(i, s, t) /\ one(j, s, u) /\ sep(h1, i, _) /\ sep(h2, j, _) /\ t != u \/ sep(h1, k, i1) /\ sep(h2, k, i2) /\ sep(l, i1, i2) /\ (one(m, _, _) /\ sep(l, m, _))) /\ eq(h1, h2)

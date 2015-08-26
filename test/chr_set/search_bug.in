@@ -1,0 +1,1 @@
+x != y /\ set_one(d1, 1) /\ set_one(d2, 2) /\ set_cup(dom, d1, d2) /\ set_elem(dom, x) /\ set_elem(dom, y)

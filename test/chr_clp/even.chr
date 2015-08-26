@@ -1,0 +1,48 @@
+/*
+ * even.chr
+ * Gregory J. Duck.
+ *
+ * Attempt to prove m4(x) |= even(x)
+ *
+ * Options: -s even.chr,linear
+ * Goal   : m4(x) /\ not even(x) /\ x = y + 2 /\ y = z + 2
+ * Result : UNSAT
+ */
+
+/*
+ * Helper:
+ */
+int_eq_plus_c(x, y, 2) /\ int_eq_plus_c(y, z, 2) ==> int_eq_plus_c(x, z, 4);
+
+type even(var of num);
+type m4(var of num);
+
+even(x) <=> even(x, false);
+not even(x) <=> not even(x, false);
+m4(x) <=> m4(x, false);
+not m4(x) <=> not m4(x, false);
+
+type even(var of num, bool);
+type m4(var of num, bool);
+
+/*
+ * even(0).
+ * even(X) :- X=Y+2, even(Y).
+ */
+even(x, _) /\ int_eq_plus_c(x, y, 2) ==> int_eq_c(x, 0) \/ even(y, true);
+not even(x, _) /\ int_eq_plus_c(x, y, 2) ==> not int_eq_c(x, 0) /\
+    not even(y, true);
+
+/*
+ * m4(0).
+ * m4(X) :- X=Y+4, m4(Y).
+ */
+m4(x, _) /\ int_eq_plus_c(x, y, 4) ==> int_eq_c(x, 0) \/ m4(y, true);
+not m4(x, _) /\ int_eq_plus_c(x, y, 4) ==> not int_eq_c(x, 0) /\
+    not m4(y, true);
+
+/*
+ * Induction hypothesis:
+ */
+m4(x, true) ==> even(x, true);
+

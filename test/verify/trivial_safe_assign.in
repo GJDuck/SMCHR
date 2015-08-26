@@ -1,0 +1,9 @@
+REACH_1 /\ x2 <-> p = 0 /\ EDGE_1_4 -> REACH_4 /\ EDGE_1_3 -> REACH_3 /\ EDGE_1_4 -> x2 /\ EDGE_1_3 -> not x2 /\ REACH_1 -> (EDGE_1_4 \/ EDGE_1_3) /\ REACH_3 -> EDGE_1_3 /\ REACH_3 -> false /\ REACH_4 -> EDGE_1_4 /\ REACH_4 -> store(H_4,H_0,111,p) /\ REACH_5 -> false
+/*
+void f(int *p)
+{
+    assume(p == 0);
+    *p = 111;
+    assert(0);
+}
+*/

@@ -1,0 +1,5 @@
+type p(any);
+type q(any, any, any, any, any, any, any, any, any);
+
+p(x) <=> q(x, x, x, x, x, x, x, x, x);
+

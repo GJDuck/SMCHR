@@ -1,0 +1,2 @@
+// This will terminate under SMCHR:
+p(x) <=> p(x);

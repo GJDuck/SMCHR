@@ -1,0 +1,1 @@
+set_one(sx, x) /\ set_one(sy, y) /\ set_one(sz, z) /\ set_one(sa, a) /\ set_one(sb, b) /\ set_cup(s, sa, sb) /\ set_cup(st, sx, sy) /\ set_cup(s, st, sz) /\ x = 1 /\ y = 2 /\ z = 3

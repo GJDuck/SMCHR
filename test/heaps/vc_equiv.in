@@ -1,0 +1,1 @@
+eq(h, h0) /\ sep(h1, c1, h0) /\ one(c1, x1, v) /\ sep(h1, c2, h2) /\ one(c2, x1, w) /\ not eq(h, h2)

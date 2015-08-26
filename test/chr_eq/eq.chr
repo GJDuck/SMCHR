@@ -1,0 +1,14 @@
+/*
+ * eq.chr
+ * Gregory J. Duck (gregory AT comp.nus.edu.sg)
+ *
+ * Replaces the built-in equality solver with a naive CHR implementation.
+ */
+
+int_eq(x, y) <=> eq(x, y);
+not int_eq(x, y) <=> not eq(x, y);
+
+eq(x, x) <=> true;
+eq(x, y) ==> eq(y, x);
+eq(x, y) /\ eq(y, z) ==> eq(x, z);
+

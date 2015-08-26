@@ -1,0 +1,13 @@
+
+type eq(var of int, var of int);
+type gt(var of int, var of int);
+type eq_plus_c(var of int, var of int, int);
+type eq_mul_c(var of int, var of int, int);
+type eq_plus(var of int, var of int, var of int);
+
+eq(x, y) ==> int_eq(x, y);
+gt(x, y) ==> int_gt(x, y);
+eq_plus_c(x, y, c) ==> int_eq_plus_c(x, y, c);
+eq_mul_c(x, y, c) ==> int_eq_mul_c(x, y, c);
+eq_plus(x, y, z) ==> int_eq_plus(x, y, z);
+

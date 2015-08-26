@@ -1,0 +1,1 @@
+and(x, y, z) /\ or(x, y, w) /\ neg(z, w)

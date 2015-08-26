@@ -1,0 +1,5 @@
+type p(num);
+type q(bool);
+
+p(x) ==> q(x);
+

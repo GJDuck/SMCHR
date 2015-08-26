@@ -1,0 +1,1 @@
+leq(x, y) /\ leq(y, z)

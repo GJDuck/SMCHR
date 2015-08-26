@@ -1,0 +1,1 @@
+not sep(h, h1, h2) /\ one(h, p, v) /\ emp(h1) /\ one(h2, p, v)

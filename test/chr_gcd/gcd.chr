@@ -1,0 +1,16 @@
+/*
+ * gcd.chr
+ * Port by Gregory J. Duck (gregory AT comp.nus.edu.sg)
+ *
+ * Computes gcd(X,Y) via the goal gcd(X) /\ gcd(Y).
+ */
+
+type gcd(num);
+
+gcd(0) <=> true;
+gcd(a) \ gcd(b) <=>
+        a $!= b /\      // Prevents set matching.
+        a $> 0 /\ b $> 0 /\ b $> a /\
+        d := b - a |
+    gcd(d);
+

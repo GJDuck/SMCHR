@@ -1,0 +1,1 @@
+boolean(x) /\ boolean(y) /\ neg(x, y)

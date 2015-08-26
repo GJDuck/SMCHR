@@ -1,0 +1,18 @@
+SMCHR: Satisfiability Modulo Constraint Handling Rules
+======================================================
+
+This binary package is an implementation of Satisfiability Modulo Constraint
+Handling Rules (SMCHR).  The package includes:
+    * ./smchr.linux -- The SMCHR system [64bit Linux]
+    * ./smchr.macosx -- The SMCHR system [64bit MacOSX]
+    * ./smchr.exe -- The SMCHR system [64bit Windows]
+    * ./doc/* -- Documentation.
+    * ./examples/* -- Example CHR solvers.
+    * ./test/* -- Test cases.
+    * ./tools/* -- Some tools:
+      - flatzinc: a FlatZinc to SMCHR translator.
+      - answer: pretty prints SMCHR output for bounds/domain/LCG problems.
+
+SMCHR (all operating systems) requires a 64-bit CPU, i.e. x64_64 or AMD64.
+Please see ./doc/smchr.pdf for the full documentation.
+

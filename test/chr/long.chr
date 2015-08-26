@@ -1,0 +1,5 @@
+type p(num, var, var, var, var, var, var, var, num);
+type q(num);
+type r(num);
+p(_, _, _, _, _, _, _, _, 1) <=> q(1);
+p(X, _, _, _, _, _, _, _, X) <=> r(X);

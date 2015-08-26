@@ -1,0 +1,1 @@
+sep(h0, f0, r0) /\ p(f0) /\ c(h0, h1) /\ sep(h1, fs, r0) /\ q(fs) /\ q(f1) /\ eq(fs, f1) /\ (not q(f1) \/ not sep(h1, f1, r0))

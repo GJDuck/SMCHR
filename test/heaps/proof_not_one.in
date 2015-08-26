@@ -1,0 +1,1 @@
+(emp(h) \/ one(h, s, t) /\ (p != s \/ v != t)) /\ one(h, p, v)

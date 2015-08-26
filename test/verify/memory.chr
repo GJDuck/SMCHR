@@ -1,0 +1,32 @@
+/*
+ * memory.chr
+ * Gregory J. Duck.
+ */
+
+// Translate into heap constraints:
+load(H, v, p) --> p != 0 /\ in(H, p, v);
+store(H, H0, v, p) --> p != 0 /\ assign(H, H0, p, v);
+
+// Memory allocation/deallocation:
+type malloc(var of heap, var of heap, var of num, num);
+malloc(h, h0, p, s) <=> s $<= 0 | p = 0;
+malloc(h, h0, p, s) <=> s $>0 /\ s $<= 4 |
+    alloc(h, h0, p, v);
+malloc(h, h0, p, s) <=> s $> 4 /\ t := s - 4 |
+    alloc(h1, h0, p, v) /\
+    int_eq_plus_c(q, p, 1) /\
+    malloc(h, h1, q, t);
+
+// Treat stack allocation as heap allocation:
+type alloca(var of heap, var of heap, var of num, num);
+alloca(h, h0, p, s) <=> t := s * 4 | malloc(h, h0, p, t);
+
+// Free is problematic since we do not know the size:
+type free(var of heap, var of heap, var of num);
+free(h, h0, p) <=> alloc(h0, h, p, v);
+
+// Expose equalities: the completeness of the heaps solver depends on
+// equality being explicated:
+int_eq_plus_c(x0, y, c) /\ int_eq_plus_c(x1, y, c) ==> x0 = x1;
+int_eq_plus_c(x, y0, c) /\ int_eq_plus_c(x, y1, c) ==> y0 = y1;
+

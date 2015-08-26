@@ -1,0 +1,1 @@
+p(x, y, z, w, m, n) /\ not p(a, b, c, d, n, m) /\ x = a /\ y = b /\ z = c /\ w = d /\ m = n 

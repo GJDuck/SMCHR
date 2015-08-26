@@ -1,0 +1,1 @@
+emp(h1) /\ emp(h2) /\ not eq(h1, h2)

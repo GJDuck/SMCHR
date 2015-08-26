@@ -1,0 +1,1 @@
+lt(x0, x1) /\ lt(x1, x2) /\ lt(x2, x3) /\ lt(x3, x4) /\ lt(x4, x5) /\ lt(x5, x6) /\ lt(x6, x7) /\ lt(x7, x8) /\ lt(x8, x9) /\ lt(x9, x10) /\ lt(x10, x11) /\ lt(x11, x12) /\ lt(x12, x13) /\ lt(x13, x14) /\ lt(x14, x15)

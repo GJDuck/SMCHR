@@ -1,0 +1,23 @@
+/*
+ * ord.chr
+ * Gregory J. Duck (gregory AT comp.nus.edu.sg)
+ * 
+ * Integrated less-than-or-equal-to CHR solver.
+ * (should be used in conjunction with the built-in `eq' solver).
+ */
+
+// Convert built-in integer constraints into CHR leq/2 constraints:
+int_gt(x, y) ==> leq(y, x) /\ not leq(x, y);
+int_eq_plus_c(x, y, c) ==> c $> 0 | leq(y, x) /\ not leq(x, y);
+int_eq_plus_c(x, y, c) ==> c $< 0 | leq(x, y) /\ not leq(y, x);
+
+// Standard CHR leq/2 solver:
+leq(x, x) <=> true;
+leq(x, y) /\ leq(y, x) ==> x = y;
+leq(x, y) /\ leq(y, z) ==> leq(x, z);
+
+// Standard CHR lt/2 solver:
+not leq(x, x) ==> false;
+not leq(x, y) /\ not leq(y, x) ==> false;
+not leq(x, y) /\ not leq(y, z) ==> not leq(x, z);
+

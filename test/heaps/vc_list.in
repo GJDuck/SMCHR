@@ -1,0 +1,1 @@
+sep(h0, l, r) /\ sep(r, pv, r0) /\ one(pv, p, w) /\ p(l) /\ sep(h0, c0, hr) /\ one(c0, p, v0) /\ one(c1, p, v) /\ sep(h1, c1, hr) /\ not sub(l, h1)

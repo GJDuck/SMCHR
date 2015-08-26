@@ -1,0 +1,3 @@
+
+eq(x, y) /\ p(x) /\ not p(y) ==> false;
+

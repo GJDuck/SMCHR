@@ -1,0 +1,1 @@
+xs = cons(1, cons(2, cons(3, empty()))) /\ int_eq_call_length(len, xs) /\ len != 3

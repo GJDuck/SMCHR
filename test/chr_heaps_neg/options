@@ -1,0 +1,1 @@
+--solver heaps.chr --solver eq --solver linear --solver heaps_neg.chr

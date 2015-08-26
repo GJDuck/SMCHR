@@ -1,0 +1,1 @@
+set_eq(s, t) /\ set_elem(s, x) /\ set_elem(t, y)

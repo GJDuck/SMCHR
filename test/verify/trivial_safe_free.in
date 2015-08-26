@@ -1,0 +1,9 @@
+REACH_1 /\ REACH_1 -> (p2 = p /\ free(H_2,H_0,p2) /\ store(H_3,H_2,111,p)) /\ REACH_3 -> false
+/*
+void f(int *p)
+{
+    free(p);        // Assumes that free() returns memory to O/S.
+    *p = 111;
+    assert(0);      // Safe because we always crash!
+}
+*/

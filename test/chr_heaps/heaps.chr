@@ -1,0 +1,37 @@
+/*
+ * heaps.chr
+ * Gregory J. Duck (gregory AT comp.nus.edu.sg)
+ * A heap (finite partial map) solver with Separation.
+ *
+ * Encoding:
+ *      emp(h) --->
+ *          h is the empty heap.
+ *      one(h, p, v) -->
+ *          h is a singleton heap mapping p to v.
+ *      sep(h, h1, h2) --->
+ *          1) `h = h1 union h2' (as sets), and
+ *          2) `dom(h1) intersect dom(h2) = empty`
+ *      in(h, p, v) --->
+ *          h maps p to v.
+ */
+
+type in(var of heap, var of num, var of num);
+
+in(h, p, v) /\ in(h, p, w) ==> v = w;
+
+type emp(var of heap);
+
+emp(h) /\ in(h, p, v) ==> false;
+
+type one(var of heap, var of num, var of num);
+
+one(h, p, v) ==> in(h, p, v);
+one(h, p, v) /\ in(h, q, w) ==> p = q /\ v = w;
+
+type set(var of heap, var of heap, var of heap);
+
+sep(h, h1, _) /\ in(h1, p, v) ==> in(h, p, v);
+sep(h, _, h2) /\ in(h2, p, v) ==> in(h, p, v);
+sep(_, h1, h2) /\ in(h1, p, _) /\ in(h2, q, _) ==> not p = q;
+sep(h, h1, h2) /\ in(h, p, v) ==> in(h1, p, v) \/ in(h2, p, v);
+

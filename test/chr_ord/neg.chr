@@ -1,0 +1,2 @@
+not lt(x, y) <=> leq(y, x);
+not leq(x, y) <=> lt(y, x);

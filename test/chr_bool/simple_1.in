@@ -1,0 +1,1 @@
+neg(x, nx) /\ and(x, nx, r)

@@ -1,0 +1,1 @@
+x = f_str(1) /\ y = f_nil(2) /\ z = f_atom(3)

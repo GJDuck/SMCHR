@@ -1,0 +1,1 @@
+sep(h, a1, h1) /\ one(a1, p1, v1) /\ sep(h1, a2, a3) /\ one(a2, p2, v2) /\ one(a3, p3, v3) /\ sep(h, b1, b2) /\ one(b1, q1, w1) /\ one(b2, q2, w2)

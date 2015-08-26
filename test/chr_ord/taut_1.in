@@ -1,0 +1,1 @@
+not (lt(x, y) \/ x = y \/ lt(y, x))

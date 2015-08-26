@@ -1,0 +1,10 @@
+/*
+ * reach.chr
+ * Gregory J. Duck.
+ */
+
+not reach(H, F) <=> in(H, s, t) /\ in(F, t, u);
+reach(H, F) /\ in(H, p, v) ==> not dom(F, v);
+
+int_eq_c(x, c) /\ int_eq_c(y, c) ==> x = y;
+

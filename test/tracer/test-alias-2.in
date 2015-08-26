@@ -1,0 +1,1 @@
+REACH_1 /\ x4 <-> x3 = 0 /\ EDGE_1_6 -> REACH_6 /\ EDGE_1_5 -> REACH_5 /\ EDGE_1_6 -> x4 /\ EDGE_1_5 -> not x4 /\ REACH_1 -> (store(H_3,H_0,0,p2) /\ store(H_4,H_3,1,p2) /\ load(H_4,x3,p2) /\ (EDGE_1_6 \/ EDGE_1_5)) /\ EDGE_1_6 -> eq(H_1,H_4) /\ REACH_6 -> EDGE_1_6 /\ REACH_6 -> true /\ EDGE_1_5 -> eq(H_2,H_4) /\ REACH_5 -> EDGE_1_5 /\ REACH_5 -> false

@@ -1,0 +1,1 @@
+set_cup(s, t, u) /\ set_elem(t, x) /\ set_elem(u, y) /\ set_elem(s, z) /\ not set_elem(u, z)

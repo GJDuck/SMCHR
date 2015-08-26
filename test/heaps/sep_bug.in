@@ -1,0 +1,1 @@
+sep(H, H1, H2) /\ dom(H2, p) /\ not dom(H, p)

@@ -1,0 +1,1 @@
+sep(H, L, F) /\ reach(L, F) /\ not dom(F, xs) /\ n > 0 /\ xs != 0 /\ n1 = n - 1 /\ dom(F, xs)

@@ -1,0 +1,1 @@
+sep(h, h1, h2) /\ sep(h1, h3, h4) /\ sep(h2, h5, h6) /\ sep(h3, h7, h8) /\ one(h8, p, v) /\ sep(h6, h9, h10) /\ sep(h9, h11, h12) /\ sep(h11, h13, h14) /\ one(h14, q, w) /\ p = q

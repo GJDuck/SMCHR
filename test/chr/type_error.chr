@@ -1,0 +1,1 @@
+type int_eq_c(var of num, var of num);

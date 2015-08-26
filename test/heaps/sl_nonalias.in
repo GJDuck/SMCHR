@@ -1,0 +1,1 @@
+one(HX, X, _) /\ one(HY, Y, _) /\ sep(A, HX, HY) /\ sep(H, A, R) /\ one(H1, X, _) /\ one(H2, Y, _) /\ sep(B, H, H1) /\ sep(C, H, H2)

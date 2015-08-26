@@ -1,0 +1,1 @@
+set_cap(s, t, u) /\ set_elem(t, x) /\ set_elem(u, x) /\ set_elem(s, y)

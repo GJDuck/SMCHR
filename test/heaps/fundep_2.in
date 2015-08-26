@@ -1,0 +1,1 @@
+sep(h, h1, h2) /\ sep(h, h1, h3) /\ not eq(h2, h3)

@@ -1,0 +1,1 @@
+one(h, p, v) /\ one(h, p, w) /\ v != w

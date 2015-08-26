@@ -1,0 +1,36 @@
+/*
+ * domain.chr
+ * Gregory J. Duck (gregory AT comp.nus.edu.sg)
+ * A simple domain propagation solver.
+ *
+ * This is intended to be used in conjunction with bounds.chr, i.e.
+ * $ ./smchr --solver bounds.chr,domain.chr
+ */
+
+type val(var of num, num) priority high;
+
+lb(x, l) /\ val(x, v) ==> v $< l | false;
+ub(x, u) /\ val(x, v) ==> v $> u | false;
+
+lb(x, v) /\ ub(x, v) ==> val(x, v);
+
+val(x, v1) /\ val(x, v2) ==> v1 $!= v2 | false;
+
+int_eq_c(x, c) ==> val(x, c);
+
+int_eq(x, y) /\ val(x, v) ==> val(y, v);
+int_eq(x, y) /\ val(y, v) ==> val(x, v);
+int_eq(x, y) /\ not val(x, v) ==> not val(y, v);
+int_eq(x, y) /\ not val(y, v) ==> not val(x, v);
+
+not int_eq(x, y) /\ val(x, v) ==> not val(y, v);
+not int_eq(x, y) /\ val(y, v) ==> not val(x, v);
+
+int_eq_plus_c(x, y, c) /\ val(x, vx) ==> vy := vx - c | val(y, vy);
+int_eq_plus_c(x, y, c) /\ val(y, vy) ==> vx := vy + c | val(x, vx);
+int_eq_plus_c(x, y, c) /\ not val(x, vx) ==> vy := vx - c | not val(y, vy);
+int_eq_plus_c(x, y, c) /\ not val(y, vy) ==> vx := vy + c | not val(x, vx);
+
+not int_eq_plus_c(x, y, c) /\ val(x, vx) ==> vy := vx - c | not val(y, vy);
+not int_eq_plus_c(x, y, c) /\ val(y, vy) ==> vx := vy + c | not val(x, vx);
+

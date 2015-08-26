@@ -1,0 +1,1 @@
+atom_eq(x, y) /\ atom_eq(y, z) /\ not atom_eq(x, z)

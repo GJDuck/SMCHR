@@ -1,0 +1,106 @@
+
+type sudoku(num);
+type squares(num, num, num, num, num);
+type square(num, num, num, num, num);
+
+sudoku(0) <=>
+    squares(1, 1, 1, 1, 9) /\
+    squares(1, 1, 1, 2, 9) /\
+    squares(1, 1, 1, 3, 9) /\
+    squares(1, 1, 2, 1, 9) /\
+    squares(1, 1, 2, 2, 9) /\
+    squares(1, 1, 2, 3, 9) /\
+    squares(1, 1, 3, 1, 9) /\
+    squares(1, 1, 3, 2, 9) /\
+    squares(1, 1, 3, 3, 9) /\
+
+    squares(1, 2, 1, 1, 9) /\
+    squares(1, 2, 1, 2, 9) /\
+    squares(1, 2, 1, 3, 9) /\
+    squares(1, 2, 2, 1, 9) /\
+    squares(1, 2, 2, 2, 9) /\
+    squares(1, 2, 2, 3, 9) /\
+    squares(1, 2, 3, 1, 9) /\
+    squares(1, 2, 3, 2, 9) /\
+    squares(1, 2, 3, 3, 9) /\
+
+    squares(1, 3, 1, 1, 9) /\
+    squares(1, 3, 1, 2, 9) /\
+    squares(1, 3, 1, 3, 9) /\
+    squares(1, 3, 2, 1, 9) /\
+    squares(1, 3, 2, 2, 9) /\
+    squares(1, 3, 2, 3, 9) /\
+    squares(1, 3, 3, 1, 9) /\
+    squares(1, 3, 3, 2, 9) /\
+    squares(1, 3, 3, 3, 9) /\
+
+    squares(2, 1, 1, 1, 9) /\
+    squares(2, 1, 1, 2, 9) /\
+    squares(2, 1, 1, 3, 9) /\
+    squares(2, 1, 2, 1, 9) /\
+    squares(2, 1, 2, 2, 9) /\
+    squares(2, 1, 2, 3, 9) /\
+    squares(2, 1, 3, 1, 9) /\
+    squares(2, 1, 3, 2, 9) /\
+    squares(2, 1, 3, 3, 9) /\
+
+    squares(2, 2, 1, 1, 9) /\
+    squares(2, 2, 1, 2, 9) /\
+    squares(2, 2, 1, 3, 9) /\
+    squares(2, 2, 2, 1, 9) /\
+    squares(2, 2, 2, 2, 9) /\
+    squares(2, 2, 2, 3, 9) /\
+    squares(2, 2, 3, 1, 9) /\
+    squares(2, 2, 3, 2, 9) /\
+    squares(2, 2, 3, 3, 9) /\
+
+    squares(2, 3, 1, 1, 9) /\
+    squares(2, 3, 1, 2, 9) /\
+    squares(2, 3, 1, 3, 9) /\
+    squares(2, 3, 2, 1, 9) /\
+    squares(2, 3, 2, 2, 9) /\
+    squares(2, 3, 2, 3, 9) /\
+    squares(2, 3, 3, 1, 9) /\
+    squares(2, 3, 3, 2, 9) /\
+    squares(2, 3, 3, 3, 9) /\
+
+    squares(3, 1, 1, 1, 9) /\
+    squares(3, 1, 1, 2, 9) /\
+    squares(3, 1, 1, 3, 9) /\
+    squares(3, 1, 2, 1, 9) /\
+    squares(3, 1, 2, 2, 9) /\
+    squares(3, 1, 2, 3, 9) /\
+    squares(3, 1, 3, 1, 9) /\
+    squares(3, 1, 3, 2, 9) /\
+    squares(3, 1, 3, 3, 9) /\
+
+    squares(3, 2, 1, 1, 9) /\
+    squares(3, 2, 1, 2, 9) /\
+    squares(3, 2, 1, 3, 9) /\
+    squares(3, 2, 2, 1, 9) /\
+    squares(3, 2, 2, 2, 9) /\
+    squares(3, 2, 2, 3, 9) /\
+    squares(3, 2, 3, 1, 9) /\
+    squares(3, 2, 3, 2, 9) /\
+    squares(3, 2, 3, 3, 9) /\
+
+    squares(3, 3, 1, 1, 9) /\
+    squares(3, 3, 1, 2, 9) /\
+    squares(3, 3, 1, 3, 9) /\
+    squares(3, 3, 2, 1, 9) /\
+    squares(3, 3, 2, 2, 9) /\
+    squares(3, 3, 2, 3, 9) /\
+    squares(3, 3, 3, 1, 9) /\
+    squares(3, 3, 3, 2, 9) /\
+    squares(3, 3, 3, 3, 9);
+
+squares(x, y, a, b, 0) <=> false;
+squares(x, y, a, b, v) <=> v $> 0 /\ w := v - 1 |
+    square(x, y, a, b, v) \/ squares(x, y, a, b, w);
+
+square(x, y, a, b, v) /\ square(x, y, a, b, w) ==> v = w;
+square(x, y, a, b, v) /\ square(x, y, c, d, v) ==> a $!= c | false;
+square(x, y, a, b, v) /\ square(x, y, c, d, v) ==> b $!= d | false;
+square(x, y, a, b, v) /\ square(x, z, a, _, v) ==> y $!= z | false;
+square(x, y, a, b, v) /\ square(z, y, _, b, v) ==> x $!= z | false;
+

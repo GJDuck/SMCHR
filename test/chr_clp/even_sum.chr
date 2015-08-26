@@ -1,0 +1,41 @@
+/*
+ * even.chr
+ * Gregory J. Duck.
+ *
+ * Attempt to prove x = y + z /\ even(y) /\ even(z) |= even(x)
+ *
+ * Options: -s even_sum.chr,eq,linear
+ * Goal   : x = y + z /\ y = y0 + 2 /\ z = z0 + 2 /\ x = x0 + 2 /\
+ *          x0 = x1 + 2 /\ even(y) /\ even(z) /\ not even(x)
+ * Result : UNSAT
+ */
+
+/*
+ * Helper:
+ */
+int_eq_plus_c(x, y, 2) /\ int_eq_plus_c(y, z, 2) ==> int_eq_plus_c(x, z, 4);
+int_eq_plus(x, y, z) /\ int_eq_plus_c(y, y0, 2) /\ int_eq_plus_c(z, z0, 2)
+    /\ int_eq_plus_c(x, x0, 4) ==> int_eq_plus(x0, y0, z0);
+int_eq_plus(x, y, z) /\ int_eq_c(y, 0) ==> int_eq(x, z);
+int_eq_plus(x, y, z) /\ int_eq_c(z, 0) ==> int_eq(x, y);
+
+type even(var of num);
+
+even(x) <=> even(x, false);
+not even(x) <=> not even(x, false);
+
+type even(var of num, bool);
+
+/*
+ * even(0).
+ * even(X) :- X=Y+2, even(Y).
+ */
+even(x, _) /\ int_eq_plus_c(x, y, 2) ==> int_eq_c(x, 0) \/ even(y, true);
+not even(x, _) /\ int_eq_plus_c(x, y, 2) ==> not int_eq_c(x, 0) /\
+    not even(y, true);
+
+/*
+ * Induction hypothesis:
+ */
+int_eq_plus(x, y, z) /\ even(y, true) /\ even(z, true) ==> even(x, true);
+

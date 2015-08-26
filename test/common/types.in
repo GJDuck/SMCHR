@@ -1,0 +1,1 @@
+int_eq_c(x, 777) /\ int_eq_plus_c(x, y, 888) /\ int_lb(x, 999)

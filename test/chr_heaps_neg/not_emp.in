@@ -1,0 +1,1 @@
+emp(h) /\ sep(i, h, h) /\ not emp(i)

@@ -1,0 +1,1 @@
+not sep(h, h, h) /\ emp(h)

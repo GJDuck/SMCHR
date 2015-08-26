@@ -1,0 +1,31 @@
+/*
+ * heaps_neg.chr
+ * Gregory J. Duck (gregory AT comp.nus.edu.sg)
+ *
+ * Extra rules for the negation of _normalized_ heap constraints.
+ * For use in combination with heaps.chr
+ */
+
+not emp(h) <=> in(h, s, t);
+
+not one(h, p, v) <=> emp(h) \/ not_one_helper(h, p, v);
+not_one_helper(h, p, v) <=>
+    in(h, s, t) /\
+    not_one_helper_2(p, v, s, t);
+not_one_helper_2(p, v, s, t) <=>
+    p != s \/ v != t;
+
+not sep(h, h1, h2) <=>
+    not_sep_case_1(s, t, h, h1, h2) \/
+    not_sep_case_2(s, t, h, h1, h2) \/
+    not_sep_case_3(s, t, h, h1, h2) \/
+    not_sep_case_4(s, t, h, h1, h2);
+not_sep_case_1(s, t, h, h1, h2) <=>
+    in(h, s, t) /\ not in(h1, s, t) /\ not in(h2, s, t);
+not_sep_case_2(s, t, h, h1, h2) <=>
+    in(h1, s, t) /\ not in(h, s, t);
+not_sep_case_3(s, t, h, h1, h2) <=>
+    in(h2, s, t) /\ not in(h, s, t);
+not_sep_case_4(s, t, h, h1, h2) <=>
+    in(h1, s, t) /\ in(h2, s, u);
+

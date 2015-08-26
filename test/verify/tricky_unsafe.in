@@ -1,0 +1,16 @@
+true /\ REACH_1 /\ x5 <-> x4 = 111 /\ EDGE_1_7 -> REACH_7 /\ EDGE_1_6 -> REACH_6 /\ EDGE_1_7 -> x5 /\ EDGE_1_6 -> not x5 /\ REACH_1 -> (malloc(H_3,H_0,p2,4) /\ p3 = p2 /\ store(H_4,H_3,111,p) /\ store(H_5,H_4,222,p3) /\ load(H_5,x4,p) /\ (EDGE_1_7 \/ EDGE_1_6)) /\ EDGE_1_6 -> eq(H_1,H_5) /\ REACH_6 -> EDGE_1_6 /\ REACH_6 -> true /\ EDGE_1_7 -> eq(H_2,H_5) /\ REACH_7 -> EDGE_1_7 /\ REACH_7 -> false
+/*
+
+#include <stdlib.h>
+
+// This program is unsafe because (p) may be a dangling pointer that happens
+// to be equal to the value returned by malloc():
+void f(int *p)
+{   
+    int *q = (int *)malloc(sizeof(int));
+    *p = 111;
+    *q = 222;
+    assert(*p == 111);
+}
+
+*/

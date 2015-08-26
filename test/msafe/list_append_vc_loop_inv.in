@@ -1,0 +1,1 @@
+sep(H, L, F) /\ reach(L, F) /\ not dom(F, xs) /\ in(H, xs, xs1) /\ sep(H, L1, F) /\ not (sep(H, L1, F) /\ reach(L1, F) /\ not dom(F, xs1)) 

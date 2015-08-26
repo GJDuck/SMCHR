@@ -1,0 +1,1 @@
+queens(8) /\ queen(1, 1) /\ not queen(3, 4) /\ not queen(3, 5) /\ not queen(4, 3) /\ not queen(5, 3)

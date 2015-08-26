@@ -1,0 +1,1 @@
+(one(i, s, t) /\ sep(h, i, j)) /\ emp(h)

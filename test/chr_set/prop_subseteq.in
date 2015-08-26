@@ -1,0 +1,1 @@
+set_subseteq(s, t) /\ set_elem(s, x)

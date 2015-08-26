@@ -1,0 +1,1 @@
+REACH_1 /\ EDGE_1_2 -> REACH_2 /\ REACH_1 -> EDGE_1_2 /\ EDGE_1_2 -> eq(H_1,H_0) /\ REACH_2 -> EDGE_1_2 /\ EDGE_2_3 -> REACH_3 /\ EDGE_2_3 <-> REACH_2 /\ REACH_2 -> loop_0(x,'s.0') /\ REACH_3 -> EDGE_2_3 /\ REACH_3 -> false

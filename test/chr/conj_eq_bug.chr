@@ -1,0 +1,5 @@
+type p(num, num);
+type q(num);
+
+p(x, y) <=> x = y /\ q(x);
+

@@ -1,0 +1,763 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumitem}
+
+\newcommand{\bs}[0]{\symbol{92}~}
+
+\title{The SMCHR System Version \input{VERSION}}
+\author{Gregory J. Duck \\
+\texttt{gregory@comp.nus.edu.sg}}
+\date{}
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+The SMCHR system is an implementation of \emph{Satisfiability Modulo
+Theories} (SMT), where the \emph{Theory} part can be implemented in
+\emph{Constraint Handling Rules} (CHR).
+In practice the SMCHR system is much more, and merges
+several ideas into one unified platform, including:
+\begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+    \item \emph{Boolean Satisfiability} (SAT)
+    \item \emph{Satisfiability Modulo Theories} (SMT)
+    \item \emph{Constraint Programming} (CP)
+    \item \emph{Lazy Clause Generation} (LCG) \emph{Finite Domain} (FD) Solving
+    \item \emph{Constraint Handling Rules} (CHR)
+\end{itemize}
+Applications of the SMCHR system include:
+\begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+    \item Solving Constraint Satisfaction Problems (CSPs)
+    \item Solving Boolean Satisfiability problems (SAT)
+    \item Theory solver prototyping and implementation
+    \item Theorem proving
+    \item Program verification and analysis
+\end{itemize}
+And any other traditional SMT application.
+
+The name ``\emph{SMCHR}'' stands for
+``\emph{Satisfiability Modulo Constraint Handling Rules}'', and pays homage to
+the original goal of the SMCHR system, namely
+the integration of \emph{Constraint Handling Rules} (CHR)
+into a \emph{Satisfiability Modulo Theories} (SMT) solver~\cite{smchr, smchr2}.
+In addition to CHR, the SMCHR system support several \emph{built-in}
+theory solvers, including, unification (equality) solvers,
+finite domain (lazy clause generation) solvers,
+linear arithmetic (Simplex-based) solvers, and
+Separation-Logic style heap reasoning solvers for program
+analysis/verification.
+All built-in solvers are compatible with solvers implemented in Constraint
+Handling Rules.
+
+This document serves as the manual for the SMCHR system.
+It describes how to download and install SMCHR, how to run SMCHR and
+test queries for satisfiability, how to use the built-in solvers and
+write new solvers using CHR.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The SMCHR Quick Start Guide}
+
+\subsection{System Requirements}
+
+The SMCHR system is supported on the following platforms:
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+\emph{CPU} & \emph{Operating System} \\
+\hline
+\hline
+& Linux \\
+\texttt{x86\_64} & MacOSX \\
+& Windows \\
+\hline
+\end{tabular}
+\end{center}
+32-bit CPUs are unlikely to ever be supported.
+
+\subsection{Downloading and Installation}
+
+The SMCHR system can be downloaded from the following URL:
+\begin{quote}
+    \texttt{http://www.comp.nus.edu.sg/\symbol{126}gregory/smchr/}
+\end{quote}
+SMCHR does not require any special installation -- simply unpack and run the
+\texttt{smchr} executable.
+For example, under Linux run:
+\begin{verbatim}
+    $ ./smchr.linux
+\end{verbatim}
+%To enable \texttt{libreadline} functionality, make sure that
+%\texttt{libedit.so} appears in your dynamic link library path.
+Press \emph{control-C} or \emph{control-D} to exit.
+
+\subsection{Command Prompt}
+
+The SMCHR system prompts the user for \emph{goal} formulae.
+For example, if the user enters the goal:
+\begin{verbatim}
+    > x = y /\ x < y
+\end{verbatim}
+The SMCHR system will print the answer
+\begin{verbatim}
+    UNKNOWN
+\end{verbatim}
+indicating that (un)satisfiability is not known.
+
+To determine that the goal is unsatisfiable, we need to load a
+\emph{theory solver} that understands the standard interpretations of
+the predicates the symbols (\texttt{=}), and (\texttt{<}).
+Press \emph{control-C} to exit \texttt{smchr},
+and re-run with the built-in \emph{linear arithmetic solver} loaded, e.g.
+\begin{verbatim}
+    $ ./smchr.linux --solver linear
+    > x = y /\ x < y
+\end{verbatim}
+This time the SMCHR system will print that answer
+\begin{verbatim}
+    UNSAT
+\end{verbatim}
+indicating that the goal is unsatisfiable.
+
+The SMCHR system only gives one of two answers:
+\texttt{UNSAT} indicating that the goal is unsatisfiable, or
+\texttt{UNKNOWN} indicating that unsatisfiability \emph{could not be proven}.
+The latter can mean that either the goal is \emph{satisfiable}, or
+that the solver is \emph{incomplete} and was unable to prove unsatisfiability.
+
+\noindent \emph{NOTE}:
+The SMCHR system assumes all solvers are incomplete, and therefore
+will always answer \texttt{UNKNOWN} even if the goal is satisfiable.
+However, if the user \emph{knows} that a given solver combination is
+complete for a given goal $G$, then the answer \texttt{UNKNOWN} can
+be re-interpreted as \texttt{SAT}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Goal Language}
+
+\emph{Goals} are arbitrary (quantifier-free) formulae expressed in the
+\emph{SMCHR goal language}.
+The syntax is specified in Figure~\ref{fig:syntax}.
+Here each operator has the standard associativity and precedence.
+Note that the SMCHR system does not support SMT-LIB syntax.
+
+\begin{figure}
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Syntax & Meaning \\
+\hline
+\hline
+$\verb+x+$, $\verb+y+$, $..$ & Variable $x$, $y$, $..$ \\
+$\verb+0+$, $\verb+1+$, $\verb+2+$, $..$ & Integer constants \\
+$\verb+true+$, $\verb+false+$ & Boolean constants $\mathit{true}$,
+    $\mathit{false}$ \\
+$\verb+@f+$, $\verb+@g+$, $..$ & Atom constants $f$, $g$, $..$ \\
+$\verb+"string"+$ & String constants \\
+$\verb+nil+$ & Special \emph{nil} constant \\
+\hline
+$\verb+(+ E \verb+)+$ & Brackets $(E)$ \\
+\hline
+$\verb+not+~E$ & Negation $(\neg E)$ \\
+$E~\verb+/\+~E$ & Conjunction $(E \wedge E)$ \\
+$E~\verb+\/+~E$ & Disjunction $(E \vee E)$ \\
+$E~\verb+->+~E$ & Implication $(E \rightarrow E)$ \\
+$E~\verb+<->+~E$ & Iff $(E \leftrightarrow E)$ \\
+$E~\verb+xor+~E$ & XOR $(E~\mathit{xor}~E)$ \\
+\hline
+$E~\verb+=+~E$ & Equality $(E = E)$ \\
+$E~\verb+!=+~E$ & Disequality $(E \neq E)$ \\
+$E~\verb+<+~E$ & Less-than $(E < E)$ \\
+$E~\verb+<=+~E$ & Less-than-or-equal $(E \leq E)$ \\
+$E~\verb+>+~E$ & Greater-than $(E > E)$ \\
+$E~\verb+>=+~E$ & Greater-than-or-equal $(E \geq E)$ \\
+\hline
+$\verb+-+E$ & Negation $(-E)$ \\
+$E~\verb-+-~E$ & Addition $(E + E)$ \\
+$E~\verb+-+~E$ & Subtraction $(E - E)$ \\
+$E~\verb+*+~E$ & Multiplication $(E \times E)$ \\
+$E~\verb+/+~E$ & Division $(E \div E)$ \\
+$E~\verb+^+~E$ & Exponentiation $(E^E)$ \\
+\hline
+$\verb+p(+E\verb+,+ ..\verb+,+E\verb+)+$ & Predicate/constraint
+    $p(E, .., E)$ \\
+\hline
+$\verb+/*+~..~\verb+*/+$ & Multi-line comment \\
+$\verb+//+~..$ & Single-line comment \\
+\hline
+\end{tabular}
+\caption{SMCHR input language.\label{fig:syntax}}
+\end{center}
+\end{figure}
+
+\noindent Some example goals include:
+\vspace{-1em}
+\begin{center}
+\begin{tabular}{lll}
+Goal: & & Meaning: \\
+\verb+x /\ y+ & ~~~ & $x \wedge y$ (where $x$, $y$ are Boolean variables)
+    \\
+\verb?x + 4*y >= z \/ z < 7? & & $x + 4y \geq z \vee z < 7$ \\
+\verb+p(x) /\ (q(x) \/ r(4, y))+ & & $p(x) \wedge (q(x) \vee r(4, y))$
+\end{tabular}
+\end{center}
+Variable names may be upper or lower case.
+
+\subsection{Built-in Constraints}
+
+\begin{figure}
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+Built-in & Meaning & Notes \\
+\hline
+\hline
+$\mathtt{int\_eq\_c}(x, c)$           & $x = c$     & \\
+$\mathtt{int\_eq}(x, y)$              & $x = y$     & $x \not\equiv y$\\
+$\mathtt{int\_gt\_c}(x, c)$           & $x > c$     & \\
+$\mathtt{int\_gt}(x, y)$              & $x > y$     & $x \not\equiv y$ \\
+$\mathtt{int\_eq\_plus\_c}(x, y, c)$  & $x = y + c$ & $c \neq 0$ \\
+$\mathtt{int\_eq\_plus}(x, y, z)$     & $x = y + z$ &
+    $x \not\equiv y \not\equiv z$ \\
+$\mathtt{int\_eq\_mul\_c}(x, y, c)$   & $x = c.y$   & $c \not\in \{0, 1\}$,
+    $x \not\equiv y$ \\
+$\mathtt{int\_eq\_mul}(x, y, z)$      & $x = y.z$   &
+    $x \not\equiv y \not\equiv z$ \\
+\hline
+$\mathtt{nil\_eq\_c}(x, n)$           & $x = n$     & \\
+$\mathtt{nil\_eq}(x, y)$              & $x = y$     & $x \not\equiv y$\\
+\hline
+$\mathtt{atom\_eq\_c}(x, a)$          & $x = a$     & \\
+$\mathtt{atom\_eq}(x, y)$             & $x = y$     & $x \not\equiv y$\\
+\hline
+$\mathtt{str\_eq\_c}(x, s)$           & $x = s$     & \\
+$\mathtt{str\_eq}(x, y)$              & $x = y$     & $x \not\equiv y$\\
+\hline
+\end{tabular}
+\end{center}
+\caption{Built-in constraints.\label{fig:builtin}}
+\end{figure}
+
+The SMCHR system supports several primitive built-in constraints as
+shown in Figure~\ref{fig:builtin}.
+Here $x \not\equiv y$ indicates that $x$ and $y$ must be distinct variables.
+
+All SMCHR solvers operate over these built-in constraints.
+The SMCHR front-end will automatically normalize the input goal formula
+into a ``flat'' version in terms of these built-in constraints; in a way
+such that satisfiability is preserved.
+
+\subsection{Type-inst system}\label{sec:types}
+
+\begin{figure}
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+Type & Meaning & Notes \\
+\hline
+\hline
+$\mathtt{nil}$    & Nil      & $\{\texttt{nil}\}$ \\
+$\mathtt{bool}$   & Boolean  & $\{\texttt{true}, \texttt{false}\}$ \\
+$\mathtt{atom}$   & Atom     & $\{\texttt{@f}, \texttt{@g}, ..\}$ \\
+$\mathtt{num}$    & Number/Integer & $\mathbb{Z}$ \\
+$\mathtt{string}$ & String   & $\{\texttt{""}, ..\}$ \\
+$\mathtt{any}$    & Any type & \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Built-in types and their meanings.\label{fig:types}}
+\end{figure}
+
+SMCHR supports a weak \emph{type-inst} system.
+The standard type-names are shown in Figure~\ref{fig:types}.
+
+Each function/predicate symbol has a type signature that must be respected
+in order for a goal to be valid.
+For example, the ($\texttt{+}$) function has the type
+$\mathtt{num} \times \mathtt{num} \rightarrow \mathtt{num}$, so the goal
+(\verb-true = "1" + nil-) will produce a type error.
+In addition to these built-in type names, solvers may define new type names.
+
+In addition to types, certain constraint symbols have an
+\emph{instantiation} requirement, which specifies which arguments may or
+may not be variables.
+For example, the $\mathtt{int\_gt}(x, y)$ constraint requires that both 
+arguments be variables of type $\mathtt{num}$.
+Therefore, the goal \verb-int_gt(6, 3)- will be normalized to
+(\verb-int_gt(x, y) /\ x = 6 /\ y = 3-) by introducing fresh variables
+$x$ and $y$.
+Likewise, the goal \verb-int_gt_c(x, y)- will produce an error because
+it is impossible to normalize $y$ to a numeric constant.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Built-in Solvers} \label{sec:builtin}
+
+The SMCHR system supports several \emph{built-in} solvers including:
+\begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+    \item $\mathtt{eq}$ -- An equality solver based on union-find.
+    This solver is \emph{complete} for (dis)equality constraints.
+    \item $\mathtt{linear}$ -- A linear arithmetic solver over the integers
+    based on the Simplex algorithm over the rationals.
+    This solver is \emph{incomplete} if there exists a rational solution
+    for the given goal.
+    \item $\mathtt{bounds}$ -- A simple bounds-propagation solver over the
+    integers.
+    This solver is \emph{incomplete}.
+    \item $\mathtt{dom}$ -- A simple solver that interprets the constraint
+    $\mathit{int\_dom}(x, l, u)$ as an integer domain/range constraint
+    $x \in [l..u]$.
+    This, in combination with the $\mathtt{bounds}$ solver, forms a
+    \emph{Lazy Clause Generation} (LCG) finite domain solver.
+    This solver is \emph{incomplete}.
+    \item $\mathtt{heaps}$ -- A \emph{heap} solver for program
+    reasoning based on some of the ideas from Separation Logic.
+    See~\cite{heaps} for more information.
+    This solver is \emph{complete}.
+    \item $\mathtt{sat}$ -- The underlying SAT solver.
+    This solver is \emph{complete} and is always enabled by default.
+\end{itemize}
+Any combination of these solvers can be loaded using the 
+`\texttt{--solver $name$}' (or `\texttt{-s $name$}') command-line option.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{CHR Solvers} \label{sec:chr}
+
+The SMCHR system allows for the implementation of new theory solvers in
+\emph{Constraint Handling Rules} (CHR).
+These CHR solvers can then be loaded like any of the built-in solvers
+using the `\texttt{--solver $name$}' command-line option.
+
+\subsection{Syntax}
+
+A CHR solver is file containing a set of \emph{rules} and
+\emph{type-inst-declarations}.
+CHR rules have one of three possible forms (\emph{simplification},
+    \emph{propagation}, and \emph{simpagation} respectively):
+\begin{align*}
+\mathit{Head} & ~\texttt{<=>}~ [\mathit{Guard} ~\texttt{|}~]~\mathit{Body}
+    \texttt{;} \\
+\mathit{Head} & ~\texttt{==>}~ [\mathit{Guard} ~\texttt{|}~]~\mathit{Body}
+    \texttt{;} \\
+\mathit{Head}_1~\texttt{\bs}~\mathit{Head}_2 & ~\texttt{<=>}~
+    [\mathit{Guard}~\texttt{|}~]~\mathit{Body} \texttt{;} 
+\end{align*}
+Both $\mathit{Head}$, $\mathit{Guard}$, and $\mathit{Body}$ are
+\emph{conjunctions} (using \verb+/\+) of (negations of) constraints.
+The $\mathit{Guard}$ is optional, as indicated by the square
+parenthesis $[ .. ]$.
+
+For example, the classic \emph{less-than-or-equal-to} CHR solver is
+implemented as follows:
+\begin{verbatim}
+leq(x, x) <=> true;
+leq(x, y) /\ leq(y, x) ==> x = y;
+leq(x, y) /\ leq(y, z) ==> leq(x, z);
+\end{verbatim}
+Assuming this solver is saved in a file called \texttt{leq.chr}, then to
+load the solver, pass the command-line option `\texttt{--solver leq.chr,eq}'
+to the SMCHR system.
+The `\texttt{eq}' part loads a built-in equality solver
+(see Section~\ref{sec:builtin}).
+
+\subsection{Negation}
+
+The SMCHR allows the solver to directly manipulate \emph{negated constraints}.
+For example, assuming that $\mathtt{leq}$ represents a total order, we can
+write:
+\begin{verbatim}
+not leq(x, y) /\ not leq(y, x) ==> false;
+not leq(x, y) /\ not leq(y, z) ==> not leq(x, z);
+\end{verbatim}
+Any combination of positive and negated constraints may appear in the same
+rule.
+
+\subsection{Disjunctive rules}
+
+SMCHR also has limited support for disjunction in the rule body, i.e.
+CHR$^\vee$.
+For example:
+\begin{verbatim}
+p_or_q(x) <=> p(x) \/ q(x);
+\end{verbatim}
+SMCHR does not currently support mixing of conjunction and disjunction in
+rule bodies.
+
+\subsection{Guards}
+
+SMCHR supports a primitive guard language as shown in Figure~\ref{fig:guards}.
+\begin{figure}
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+Guard & Meaning \\
+\hline
+\hline
+$E~\texttt{\$=}~E$ & Numeric equality \\
+$E~\texttt{\$!=}~E$ & Numeric disequality \\
+$E~\texttt{\$<}~E$ & Numeric less-than \\
+$E~\texttt{\$<=}~E$ & Numeric less-than-or-equals \\
+$E~\texttt{\$>}~E$ & Numeric greater-than \\
+$E~\texttt{\$>=}~E$ & Numeric greater-than-or-equals \\
+$v~\texttt{:=}~E$ & Numeric assignment \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Supported guards.\label{fig:guards}}
+\end{figure}
+Here $v$ is a \emph{variable} and $E$ is a \emph{numeric expression} of
+the form:
+\begin{align*}
+E ::= \mathit{int}~|~v~|~E \texttt{+} E~|~E \texttt{-} E~|~
+    E \texttt{*} E~|~E \texttt{/} E
+\end{align*}
+and has the usual meaning.
+
+Note that guards only support primitive numeric tests and should not be
+confused with arbitrary \emph{ask constraints}.
+
+\subsection{Semantics}
+
+The SMCHR system works by repeatedly applying CHR rules to the constraint
+store until either (1) a fixed-point is reached (i.e. no more rules are
+applicable), or (2) failure occurs.
+The standard CHR semantics apply:
+\emph{propagation rules} ($\mathit{Head}~\texttt{==>}~\mathit{Body}$)
+\emph{add}
+the constraints in $\mathit{Body}$ whenever constraints matching
+$\mathit{Head}$ are found,
+\emph{simplification rules} ($\mathit{Head}~\texttt{<=>}~\mathit{Body}$)
+\emph{replace} the constraints matching $\mathit{Head}$ with 
+the constraints in $\mathit{Body}$, and
+\emph{simpagation rules}
+($\mathit{Head}_1~\backslash~\mathit{Head}_2~\texttt{<=>}~\mathit{Body}$)
+are a \emph{hybrid} between simplification and propagation rules, where
+only the constraints matching $\mathit{Head}_2$ are replaced by
+the constraints in $\mathit{Body}$.
+
+\subsubsection*{Comparison with other CHR systems}
+
+SMCHR follows the \emph{theoretical} operational semantics of CHR.
+No assumptions should be made about the ordering of rule applications, etc.
+
+Unlike other CHR systems, the SMCHR system uses \emph{set semantics} by
+default.
+It is therefore not necessary to specify a rule to enforce set
+semantics\footnote{
+In fact, such a rule is equivalent to (\texttt{leq(x, y) <=> true}) under
+set semantics matching.}, e.g.:
+\begin{verbatim}
+leq(x, y) \ leq(x, y) <=> true;             // This rule is wrong!
+\end{verbatim}
+The SMCHR system also uses set semantics for \emph{matching}, meaning that
+a constraint may match more than one occurrence in the head of a rule.
+For example, the constraint $\mathtt{not}~\mathtt{leq}(a, a)$ will match
+the rule:
+\begin{verbatim}
+not leq(x, y) /\ not leq(y, z) ==> false;
+\end{verbatim}
+with $x = a \wedge y = a \wedge z = a$.
+
+The SMCHR system also treats deleted constraints differently.
+A deleted constraint stays deleted ``forever'', i.e. it is not possible to
+re-generated a copy of same constraint using a rule.
+As a consequence, the following rule is always terminates in SMCHR:
+\begin{verbatim}
+p(x) <=> p(x);
+\end{verbatim}
+
+\subsection{CHR and equality}
+
+The CHR engine relies on the `$\mathtt{eq}$' solver to determine if two
+variables are equal.
+However, including the `$\mathtt{eq}$' solver is optional.
+For example, given
+\begin{verbatim}
+p(x) /\ q(x) ==> r(x)
+\end{verbatim}
+and the goal
+\begin{verbatim}
+> p(x) /\ q(y) /\ x = y
+\end{verbatim}
+then this rule will only match if the `$\mathtt{eq}$' solver was included.
+Currently the CHR engine does not use other solvers, e.g. the
+`$\mathtt{linear}$' solver, to determine if variables are equal.
+
+\subsection{Type-Inst Declarations}
+
+In addition to rules, the SMCHR system allows for the type-inst of each
+constraint to be specified.
+The general syntax for a \emph{type-inst} declaration is:
+\begin{align*}
+\texttt{type}~p([\texttt{var of}~]\mathit{type}_1, ..,
+    [\texttt{var of}~]\mathit{type}_n)\texttt{;}
+\end{align*}
+where $\mathit{type}_i$ are type names such as those specified in
+Section~\ref{sec:types}.
+For example, the type-inst declaration of the built-in $\mathtt{int\_eq\_c}$
+constraint is
+\begin{verbatim}
+type int_eq_c(var of num, num);
+\end{verbatim}
+The type declaration are used to check if the input goals are type-safe
+with respect to the CHR-defined constraints.
+
+The prefix `$\texttt{var of}$' specifies that the constraint expects the
+argument to be a variable.
+In absence of this prefix, the argument is be assumed to be a non-variable.
+This affects how constraints are normalized.
+If no type-inst declaration is present, the SMCHR system assumes a
+default declaration where every argument has the type
+`$\texttt{var of any}$'.
+
+New type names can be implicitly declared by using a new type name in a
+type-inst declaration.
+For example, the type-inst declaration
+\begin{verbatim}
+type union(var of set, var of set, var of set);
+\end{verbatim}
+will implicitly define a new type named `$\mathtt{set}$'.
+
+\subsection{Built-in constraints}
+
+CHR rules can directly manipulate built-in constraints.
+For example, the rule:
+\begin{verbatim}
+not int_eq_c(x, c) <=> d := c - 1 |
+    int_gt_c(x, c) \/ not int_gt_c(x, d);
+\end{verbatim}
+will rewrite the built-in \emph{disequality} $x \neq c$ constraint
+into a disjunction of \emph{inequalities} $x > c \vee x < c$.
+
+A rule body may use equality $x = y$ syntax directly.
+This is treated as syntactic sugar for a built-in
+equality constraint of the appropriate type, e.g.
+$\mathtt{int\_eq}(x, y)$, $\mathtt{int\_eq\_c}(x, y)$ for
+integers.
+Note that only equality has this special support.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Debugging}
+
+The SMCHR system includes a built-in interactive debugger.
+The debugger is enabled via the `\texttt{-d}' command-line option, or
+whenever the solver is interrupted (e.g. with Control-C).
+The debugger works for all kinds of solvers, both CHR and built-in.
+
+The debugger stops at various ``ports'' during the computation.
+A debugger prompt of the following form is displayed:
+\begin{tabbing}
+\texttt{[S=$\mathit{STEP}$,L=$\mathit{LEVEL}$]~$\mathit{PORT}$:~$\mathit{CLAUSE}$>}
+\end{tabbing}
+where $\mathit{STEP}$ is the step number,
+$\mathit{LEVEL}$ is the solver decision level,
+$\mathit{PORT}$ is the port name, and
+$\mathit{CLAUSE}$ is a clause representation of the port.
+The supported ports include:
+\begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+\item \texttt{PROPAGATE}: When a new literal is set to true via propagation.
+\item \texttt{FAIL}: When failure is detected.
+\item \texttt{LEARN}: When a new clause is learnt during backtracking.
+\item \texttt{SELECT}: When a new literal is selected during search.
+\end{itemize}
+Both \texttt{PROPAGATE} and \texttt{FAIL} come in two flavors:
+\texttt{[T]} = propagation/failure by a theory solver;
+\texttt{[S]} = propagation/failure by the SAT solver.
+
+Several debugger commands are available.
+These include:
+\begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+\item[-] \texttt{step} or \texttt{s}: move forward one step.
+\item[-] \texttt{step $N$} or \texttt{s $N$}: move forward $N$ steps.
+\item[-] \texttt{jump $N$} or \texttt{j $N$}: jump forward $N$ steps.
+\item[-] \texttt{goto $N$} or \texttt{g $N$}: goto step $N$.
+\item[-] \texttt{continue} or \texttt{c}: continue execution.
+\item[-] \texttt{break} or \texttt{b}: clear the breakpoint.
+\item[-] \texttt{break $S$} or \texttt{b $S$}: set a breakpoint on symbol $S$
+    (name/arity).
+\item[-] \texttt{abort} or \texttt{a}: abort execution.
+\item[-] \texttt{dump} or \texttt{d}: dump the current solver state.
+\item[-] \texttt{help} or \texttt{h} or \texttt{?}: print the help message.
+\item[-] \texttt{quit} or \texttt{q}: quit the SMCHR system.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Programming API}
+
+The SMCHR system can be used as a library and integrated into other projects.
+The programming API has deliberately being kept simple.
+The main functions are:
+\begin{itemize}[noitemsep,topsep=0pt,parsep=0pt,partopsep=0pt]
+\item \verb+void smchr_init(void)+ -
+    Initialize the SMCHR system.
+\item \verb+bool smchr_load(const char *name)+ -
+    Loads a solver with the name `\texttt{name}'.
+\item \verb+term_t smchr_execute(term_t goal)+ -
+    Executes a `\texttt{goal}' and returns the \emph{result}.
+    The result is either:
+    \begin{itemize}
+        \item $\mathit{false}$ if `\texttt{goal}' is unsatisfiable;
+        \item $\mathit{nil}$ if execution was aborted; or
+        \item A conjunction of constraints for which the theory solvers
+              cannot prove unsatisfiability.
+    \end{itemize}
+\end{itemize}
+Terms can be (de)constructed using the functions defined in `\verb+term.h+'
+(included by `\verb+smchr.h+') in the SMCHR code-base.
+A brief summary of term construction is described below:
+\begin{center}
+\begin{tabular}{|l|l|}
+\hline
+\emph{Term} & \emph{Construction} \\
+\hline
+\hline
+$\mathit{nil}$ & \verb+TERM_NIL+ \\
+$\mathit{true}$ & \verb+TERM_TRUE+ \\
+$\mathit{false}$ & \verb+TERM_FALSE+ \\
+$0, 1, ..$ & \verb+term_int(0)+, \verb+term_int(1)+, $..$ \\
+$x, y, ..$ & \verb+term_var(make_var("x"))+, \verb+term_var(make_var("y"))+,
+    $..$ \\
+$f(a_1, .., a_n)$ & \verb+term("f", a1, .., an)+ \\
+\hline
+\end{tabular}
+\end{center}
+For example, to use SMCHR to determine if the formula
+$x + x < 2 \land y = x + 3 \land y > 4$ is satisfiable, then use:
+\begin{verbatim}
+    smchr_init();                       // Initialize SMCHR.
+    smchr_load("linear");               // Load the linear solver.
+    term_t x = term_var(make_var("x"));
+    term_t y = term_var(make_var("y"));
+    term_t c1 = term("<", term("+", x, x), term_int(2));
+    term_t c2 = term("=", y, term("+", x, term_int(3)));
+    term_t c3 = term(">", y, term_int(4));
+    term_t goal = term("/\\", term("/\\", c1, c2), c3);
+    term_t r = smchr_execute(goal);     // Execute the goal.
+    if (r == TERM_FALSE)
+        printf("UNSAT!\n");
+    else
+        printf("UNKNOWN!\n");
+\end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Example Solvers}
+
+%%%%
+\subsection{Set Solver}
+
+We present a simple set solver based on
+\emph{set element propagation}:
+{
+    \small
+\begin{quote}
+\begin{verbatim}
+emp(s) /\ elem(s, x) ==> false;
+one(s, x) ==> elem(s, x);
+one(s, x) /\ elem(s, y) ==> x = y;
+cup(s, s1, s2) /\ elem(s, x)  ==> elem(s1, x) \/ elem(s2, x);
+cup(s, s1, s2) /\ elem(s1, x) ==> elem(s, x);
+cup(s, s1, s2) /\ elem(s2, x) ==> elem(s, x);
+cap(s, s1, s2) /\ elem(s, x)  ==> elem(s1, x) /\ elem(s2, x);
+cap(s, s1, s2) /\ elem(s1, x) /\ elem(s2, x) ==> elem(s, x);
+eq(s1, s2) /\ elem(s1, x) ==> elem(s2, x);
+eq(s1, s2) /\ elem(s2, x) ==> elem(s1, x);
+subseteq(s1, s2) /\ elem(s1, x) ==> elem(s2, x);
+\end{verbatim}
+\end{quote}
+}
+\noindent Here:
+\begin{itemize}
+\item $\mathtt{elem}(s, x)$ represents \emph{set element} $x \in s$;
+\item $\mathtt{one}(s, x)$ is a \emph{singleton set} $s = \{x\}$;
+\item $\mathtt{cup}(s, s_1, s_2)$ is \emph{set union} $s = s_1 \cup s_2$;
+\item $\mathtt{cap}(s, s_1, s_2)$ is \emph{set intersection}
+    $s = s_1 \cap s_2$;
+\item $\mathtt{eq}(s_1, s_2)$ is \emph{set equality} $s_1 = s_2$; and
+\item $\mathtt{subseteq}(s_1, s_2)$ is \emph{non-strict set subset}
+    $s_1 \subseteq s_2$.
+\end{itemize}
+The constraint solver works by propagating set element through other
+constraints.
+Most of the rules are self-explanatory, e.g. the rule:
+\begin{verbatim}
+cup(s, s1, s2) /\ elem(s, x)  ==> elem(s1, x) \/ elem(s2, x);
+\end{verbatim}
+states that if $s = s_1 \cup s_2$ and $x \in s$, then
+$x \in s_1$ or $x \in s_2$.
+
+The solver will continue propagation until with unsatisfiability is detected,
+or a fixed point is reached.
+If the latter occurs, the $\mathtt{elem}$ constraints form a solution to the
+original set constraints.
+
+%%%
+\subsection{Bounds Propagation Solver}
+
+An implementation of a simple \emph{bounds propagation solver} is shown
+in Figure~\ref{fig:bounds}.
+This example shows all of the main features of SMCHR.
+
+This solver under SMCHR is effectively a
+\emph{lazy clause generation} finite domain (bounds propagation) solver
+implemented in CHR.
+
+\begin{figure}
+{
+\small
+\begin{verbatim}
+type lb(var of num, num);
+type ub(var of num, num);
+
+lb(x, l1) \ lb(x, l2) <=> l1 $> l2 | true;
+ub(x, u1) \ ub(x, u2) <=> u1 $< u2 | true;
+lb(x, l) /\ ub(x, u) <=> l $> u | false;
+not lb(x, l) <=> u := l - 1 | ub(x, u);
+not ub(x, u) <=> l := u + 1 | lb(x, l);
+
+int_eq_c(x, c) ==> lb(x, c) /\ ub(x, c);
+not int_eq_c(x, c) ==> u := c - 1 /\ l := c + 1 | ub(x, u) \/ lb(x, l);
+
+int_gt_c(x, c) ==> l := c + 1 | lb(x, l);
+not int_gt_c(x, u) ==> ub(x, u);
+
+int_eq(x, y) /\ lb(x, lx) ==> lb(y, lx);
+int_eq(x, y) /\ ub(x, ux) ==> ub(y, ux);
+int_eq(x, y) /\ lb(y, ly) ==> lb(x, ly);
+int_eq(x, y) /\ ub(y, uy) ==> ub(x, uy);
+not int_eq(x, y) /\ lb(x, c) /\ ub(x, c) ==> u := c - 1 /\ l := c + 1 |
+    ub(y, u) \/ lb(y, l);
+not int_eq(x, y) /\ lb(y, c) /\ ub(y, c) ==> u := c - 1 /\ l := c + 1 |
+    ub(x, u) \/ lb(x, l);
+
+int_gt(x, y) /\ ub(x, ux) ==> uy := ux - 1 | ub(y, uy);
+int_gt(x, y) /\ lb(y, ly) ==> lx := ly + 1 | lb(x, lx);
+
+not int_gt(x, y) /\ lb(x, lx) ==> lb(y, lx);
+not int_gt(x, y) /\ ub(y, uy) ==> ub(x, uy);
+
+int_eq_plus_c(x, y, c) /\ lb(x, lx) ==> ly := lx - c | lb(y, ly);
+int_eq_plus_c(x, y, c) /\ ub(x, ux) ==> uy := ux - c | ub(y, uy);
+int_eq_plus_c(x, y, c) /\ lb(y, ly) ==> lx := ly + c | lb(x, lx);
+int_eq_plus_c(x, y, c) /\ ub(y, uy) ==> ux := uy + c | ub(x, ux);
+not int_eq_plus_c(x, y, d) /\ lb(x, c) /\ ub(x, c) ==>
+        u := c - 1 - d /\ l := c + 1 - d |
+    ub(y, u) \/ lb(y, l);
+not int_eq_plus_c(x, y, d) /\ lb(y, c) /\ ub(y, c) ==>
+        u := c - 1 + d /\ l := c + 1 + d |
+    ub(x, u) \/ lb(x, l);
+\end{verbatim}
+}
+\caption{Simple bounds propagation solver.\label{fig:bounds}}
+\end{figure}
+
+\bibliographystyle{plain}
+\bibliography{smchr}
+
+\end{document}
+

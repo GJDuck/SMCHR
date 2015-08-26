@@ -1,0 +1,1 @@
+not p(x) /\ q(x) ==> r(x) /\ not s(x);

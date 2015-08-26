@@ -1,0 +1,1 @@
+sep(h0, c0, r0) /\ one(c0, p, v0) /\ v0 = 333 /\ q != p /\ sep(h0, cq, rq) /\ one(cq, q, v1) /\ sep(h1, cq1, rq) /\ one(cq1, q, v2) /\ v2 = 444 /\ sep(h1, c1, r1) /\ one(c1, p, v3) /\ v3 != 333

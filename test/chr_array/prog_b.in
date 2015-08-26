@@ -1,0 +1,1 @@
+write(h0, h1, p, 333) /\ ( write(h1, h2, q0, 0) \/ h2 = h1 ) /\ ( write(h2, h3, q1, 0) \/ h3 = h2 ) /\ ( write(h3, h4, q2, 0) \/ h4 = h3 ) /\ ( write(h4, h5, q3, 0) \/ h5 = h4 ) /\ ( write(h5, h6, q4, 0) \/ h6 = h5 ) /\ ( write(h6, h7, q5, 0) \/ h7 = h6 ) /\ read(h7, p, x) /\ x != 333 /\ p != q0 /\ p != q1 /\ p != q2 /\ p != q3 /\ p != q4 /\ p != q5

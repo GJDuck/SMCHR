@@ -1,0 +1,1 @@
+(one(i, s, t) /\ one(j, s, u) /\ sep(h1, i, _) /\ sep(h2, j, _) \/ sep(k, h1, h2) /\ not eq(k, h)) /\ sep(h, h1, h2)

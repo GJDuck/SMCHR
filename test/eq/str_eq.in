@@ -1,0 +1,1 @@
+str_eq(x, y) /\ str_eq(y, z) /\ not str_eq(x, z)

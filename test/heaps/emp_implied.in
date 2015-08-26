@@ -1,0 +1,1 @@
+sep(h1, h, h) /\ not emp(h)

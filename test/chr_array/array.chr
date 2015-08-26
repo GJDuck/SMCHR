@@ -1,0 +1,11 @@
+/*
+ * array.chr
+ * Gregory J. Duck (gregory AT comp.nus.edu.sg)
+ *
+ * Simple array solver based on McCarthy's axioms.
+ */
+
+read(a, p, v) /\ write(_, a, p, w) ==> v = w;
+not int_eq(p, q) /\ read(a, p, v) /\ write(a0, a, q, _) ==> read(a0, p, v);
+not int_eq(q, p) /\ read(a, p, v) /\ write(a0, a, q, _) ==> read(a0, p, v);
+

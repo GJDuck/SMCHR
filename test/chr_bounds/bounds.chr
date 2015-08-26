@@ -1,0 +1,92 @@
+/*
+ * bounds.chr
+ * Gregory J. Duck (gregory AT comp.nus.edu.sg)
+ * A simple bounds propagation solver.
+ *
+ * Encoding:
+ *      lower bound ---> lb(x, l)
+ *      upper bound ---> ub(x, u)
+ *
+ * The rest is the built-in encoding:
+ *      x = c       ---> int_eq_c(x, c)
+ *      x > c       ---> int_gt_c(x, c)
+ *      x = y       ---> int_eq(x, y)
+ *      x = y + c   ---> int_eq_plus_c(x, y, c)
+ *      ..., etc.
+ */
+
+type lb(var of num, num) priority high;
+type ub(var of num, num) priority high;
+
+int_lb(x, ll) <=> lb(x, ll);
+not int_lb(x, ll) <=> uu := ll - 1 | ub(x, uu);
+
+lb(x, l1) \ lb(x, l2) <=> l1 $> l2 | true;
+ub(x, u1) \ ub(x, u2) <=> u1 $< u2 | true;
+lb(x, l) /\ ub(x, u) <=> l $> u | false;
+
+not lb(x, l) <=> u := l - 1 | ub(x, u);
+not ub(x, u) <=> l := u + 1 | lb(x, l);
+
+int_eq_c(x, c) ==> lb(x, c) /\ ub(x, c);
+not int_eq_c(x, c) ==> u := c - 1 /\ l := c + 1 | ub(x, u) \/ lb(x, l);
+
+int_gt_c(x, c) ==> l := c + 1 | lb(x, l);
+not int_gt_c(x, u) ==> ub(x, u);
+
+int_eq(x, y) /\ lb(x, lx) ==> lb(y, lx);
+int_eq(x, y) /\ ub(x, ux) ==> ub(y, ux);
+int_eq(x, y) /\ lb(y, ly) ==> lb(x, ly);
+int_eq(x, y) /\ ub(y, uy) ==> ub(x, uy);
+
+not int_eq(x, y) /\ lb(x, c) /\ ub(x, c) ==> u := c - 1 /\ l := c + 1 |
+    ub(y, u) \/ lb(y, l);
+not int_eq(x, y) /\ lb(y, c) /\ ub(y, c) ==> u := c - 1 /\ l := c + 1 |
+    ub(x, u) \/ lb(x, l);
+
+int_gt(x, y) /\ ub(x, ux) ==> uy := ux - 1 | ub(y, uy);
+int_gt(x, y) /\ lb(y, ly) ==> lx := ly + 1 | lb(x, lx);
+
+not int_gt(x, y) /\ lb(x, lx) ==> lb(y, lx);
+not int_gt(x, y) /\ ub(y, uy) ==> ub(x, uy);
+
+int_eq_plus_c(x, y, c) /\ lb(x, lx) ==> ly := lx - c | lb(y, ly);
+int_eq_plus_c(x, y, c) /\ ub(x, ux) ==> uy := ux - c | ub(y, uy);
+int_eq_plus_c(x, y, c) /\ lb(y, ly) ==> lx := ly + c | lb(x, lx);
+int_eq_plus_c(x, y, c) /\ ub(y, uy) ==> ux := uy + c | ub(x, ux);
+
+not int_eq_plus_c(x, y, d) /\ lb(x, c) /\ ub(x, c) ==>
+        u := c - 1 - d /\ l := c + 1 - d |
+    ub(y, u) \/ lb(y, l);
+not int_eq_plus_c(x, y, d) /\ lb(y, c) /\ ub(y, c) ==>
+        u := c - 1 + d /\ l := c + 1 + d |
+    ub(x, u) \/ lb(x, l);
+
+int_eq_plus(x, y, z) /\ lb(y, ly) /\ lb(z, lz) ==>
+        lx := ly + lz |
+    lb(x, lx);
+int_eq_plus(x, y, z) /\ ub(y, uy) /\ ub(z, uz) ==>
+        ux := uy + uz |
+    ub(x, ux);
+int_eq_plus(x, y, z) /\ lb(x, lx) /\ ub(z, uz) ==>
+        ly := lx - uz |
+    lb(y, ly);
+int_eq_plus(x, y, z) /\ ub(x, ux) /\ lb(z, lz) ==>
+        uy := ux - lz |
+    ub(y, uy);
+int_eq_plus(x, y, z) /\ lb(x, lx) /\ ub(y, uy) ==>
+        lz := lx - uy |
+    lb(z, lz);
+int_eq_plus(x, y, z) /\ ub(x, ux) /\ lb(y, ly) ==>
+        uz := ux - ly |
+    ub(z, uz);
+
+int_eq_mul_c(x, y, c) /\ lb(x, lx) ==> c $> 0 /\ ly := lx / c | lb(y, ly);
+int_eq_mul_c(x, y, c) /\ lb(x, lx) ==> c $< 0 /\ uy := lx / c | ub(y, uy);
+int_eq_mul_c(x, y, c) /\ ub(x, ux) ==> c $> 0 /\ uy := ux / c | ub(y, uy);
+int_eq_mul_c(x, y, c) /\ ub(x, ux) ==> c $< 0 /\ ly := ux / c | lb(y, ly);
+int_eq_mul_c(x, y, c) /\ lb(y, ly) ==> c $> 0 /\ lx := ly * c | lb(x, lx);
+int_eq_mul_c(x, y, c) /\ lb(y, ly) ==> c $< 0 /\ ux := ly * c | ub(x, ux);
+int_eq_mul_c(x, y, c) /\ ub(y, uy) ==> c $> 0 /\ ux := uy * c | ub(x, ux);
+int_eq_mul_c(x, y, c) /\ ub(y, uy) ==> c $< 0 /\ lx := uy * c | lb(x, lx);
+

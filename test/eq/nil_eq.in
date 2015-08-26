@@ -1,0 +1,1 @@
+nil_eq(x, y) /\ nil_eq(y, z) /\ not nil_eq(x, z)

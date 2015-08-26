@@ -1,0 +1,9 @@
+a(x) /\ f(x) ==> false;
+a(x) /\ g(x) ==> false;
+a(x) /\ h(x) ==> false;
+b(x) /\ f(x) ==> false;
+b(x) /\ g(x) ==> false;
+b(x) /\ h(x) ==> false;
+c(x) /\ f(x) ==> false;
+c(x) /\ g(x) ==> false;
+c(x) /\ h(x) ==> false;

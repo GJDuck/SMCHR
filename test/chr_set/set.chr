@@ -1,0 +1,46 @@
+/*
+ * set.chr
+ * Gregory J. Duck (gregory AT comp.nus.edu.sg)
+ * A set (of int) solver.
+ *
+ * Encoding:
+ *      x is an element of s               ---> set_elem(s, x)
+ *      s is the emptyset                  ---> set_emp(s)
+ *      s is the singleton set {x}         ---> set_one(s, x)
+ *      s is the union of s1 and s2        ---> set_cup(s, s1, s2)
+ *      s is the intersection of s1 and s2 ---> set_cap(s, s1, s2)
+ *      s1 and s2 are equal                ---> set_eq(s1, s2)
+ *      s1 is a (non-strict) subset of s2  ---> set_subseteq(s1, s2)
+ */
+
+type set_elem(var of set, var of any);
+
+type set_emp(var of set);
+
+set_emp(s) /\ set_elem(s, x) ==> false;
+
+type set_one(var of set, var of any);
+
+set_one(s, x) ==> set_elem(s, x);
+set_one(s, x) /\ set_elem(s, y) ==> x = y;
+
+type set_cup(var of set, var of set, var of set);
+
+set_cup(s, s1, s2) /\ set_elem(s, x)  ==> set_elem(s1, x) \/ set_elem(s2, x);
+set_cup(s, s1, s2) /\ set_elem(s1, x) ==> set_elem(s, x);
+set_cup(s, s1, s2) /\ set_elem(s2, x) ==> set_elem(s, x);
+
+type set_cap(var of set, var of set, var of set);
+
+set_cap(s, s1, s2) /\ set_elem(s, x)  ==> set_elem(s1, x) /\ set_elem(s2, x);
+set_cap(s, s1, s2) /\ set_elem(s1, x) /\ set_elem(s2, x) ==> set_elem(s, x);
+
+type set_eq(var of set, var of set);
+
+set_eq(s1, s2) /\ set_elem(s1, x) ==> set_elem(s2, x);
+set_eq(s1, s2) /\ set_elem(s2, x) ==> set_elem(s1, x);
+
+type set_subseteq(var of set, var of set);
+
+set_subseteq(s1, s2) /\ set_elem(s1, x) ==> set_elem(s2, x);
+

@@ -1,0 +1,2 @@
+p(x) /\ p(y) ==> x = y \/ q_helper(x, y);
+q_helper(x, y) <=> x != y /\ q(x, y);

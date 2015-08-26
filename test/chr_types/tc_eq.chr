@@ -1,0 +1,14 @@
+type f(var of num, atom, var of num);
+type f(var of num, atom, var of num, var of num);
+type f_helper(bool, atom, var of num, var of num, var of num);
+
+f(x, F, a) /\ f(y, F, a)       ==> x = y;
+f(x, F, a, b) /\ f(y, F, a, b) ==> x = y;
+
+f(x, @EQ, y, z) <=> f_helper(true, @G, x, y, z) \/ f_helper(false, @H, x, y, z);
+
+f_helper(true, F, x, y, z)  <=> y = z /\ f(x, F, y);
+f_helper(false, F, x, y, z) <=> y != z /\ f(x, F, y, z);
+
+not f_helper(_, _, _, _, _) <=> true;
+

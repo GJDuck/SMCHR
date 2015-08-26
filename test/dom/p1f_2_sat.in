@@ -1,0 +1,1 @@
+objective <= 4 /\ int_dom(p_2,1,2) /\ int_dom(p_1,1,2) /\ objective = INT____00001 /\ int_dom(objective,3,6) /\ int_dom(INT____00001,3,6) /\ BOOL____00002 <-> p_1 = 1 /\ BOOL____00003 <-> p_1 = 2 /\ BOOL____00003 <-> p_2 = 1 /\ BOOL____00005 <-> p_2 = 2 /\ 2*p_2 + 1*p_1 + -1*INT____00001 = 0 /\ p_1 != 1 /\ p_2 != 2

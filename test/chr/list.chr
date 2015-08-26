@@ -1,0 +1,9 @@
+
+type empty() = list;
+type cons(int, var of list) = list;
+type length(var of list) = int;
+
+list_eq_call_empty(xs) \ int_eq_call_length(len, xs) <=> len = 0;
+list_eq_call_cons(xs, _, ys) \ int_eq_call_length(len, xs) <=>
+    int_eq_plus_c(len, len1, 1) /\ int_eq_call_length(len1, ys);
+

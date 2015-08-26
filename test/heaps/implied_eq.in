@@ -1,0 +1,1 @@
+one(h0, p, v) /\ one(h1, q, v) /\ sep(x, h0, i) /\ sep(x, h1, i) /\ p != q

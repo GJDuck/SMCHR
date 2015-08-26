@@ -1,0 +1,3 @@
+type p(num);
+type p(atom);
+p(x) <=> true;

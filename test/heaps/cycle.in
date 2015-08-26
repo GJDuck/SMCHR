@@ -1,0 +1,1 @@
+sep(h1, x1, h2) /\ sep(h2, x2, h3) /\ sep(h3, x3, h4) /\ sep(h4, x4, h5) /\ sep(h5, x5, h1) /\ not emp(h1) /\ not emp(x3)

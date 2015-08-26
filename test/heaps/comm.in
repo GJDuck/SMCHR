@@ -1,0 +1,1 @@
+sep(h, a, b) /\ sep(x, b, a) /\ not eq(h, x)

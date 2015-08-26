@@ -1,0 +1,1 @@
+sep(h, a, b) /\ sep(x, b, a) /\ ((in(h, s, t) /\ not in(x, s, t)) \/ (in(x, s, t) /\ not in(h, s, t))) 

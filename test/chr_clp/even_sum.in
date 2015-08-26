@@ -1,0 +1,1 @@
+x = y + z /\ y = y0 + 2 /\ z = z0 + 2 /\ x = x0 + 2 /\ x0 = x1 + 2 /\ even(y) /\ even(z) /\ not even(x)

@@ -1,0 +1,11 @@
+type p(var of num);
+type q(num);
+p(1) ==> false;
+p(2) ==> false;
+p(3) ==> false;
+p(5) ==> false;
+p(6) ==> false;
+p(7) ==> false;
+p(8) ==> false;
+p(9) ==> false;
+p(4) <=> q(4);

@@ -1,0 +1,26 @@
+/*
+ * queens.chr
+ * Gregory J. Duck (gregory AT comp.nus.edu.sg)
+ * A pure CHR implementation of the N-queens problem.
+ *
+ * INPUT: queens(N).
+ */
+
+type queens(num);
+type queens(num, num);
+type place_queen(num, num);
+type queen(num, num);
+
+queens(n) <=> queens(n, n);
+
+queens(0, _) <=> true;
+queens(i, n) <=> i $> 0 /\ j := i - 1 | place_queen(i, n) /\ queens(j, n);
+
+place_queen(x, 0) <=> false;
+place_queen(x, y) <=> y $> 0 /\ z := y - 1 | queen(x, y) \/ place_queen(x, z);
+
+// Note: must be careful of set-matching; so we use the `x $< a' guard.
+queen(x, y) /\ queen(a, y) ==> x $< a | false;
+queen(x, y) /\ queen(a, b) ==> x $< a /\ d := x - a /\ d := y - b | false;
+queen(x, y) /\ queen(a, b) ==> x $< a /\ d := a - x /\ d := y - b | false;
+

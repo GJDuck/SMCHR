@@ -1,0 +1,1 @@
+eq_mul_c(x, y, 1) /\ eq_mul_c(a, b, 0) /\ eq_mul_c(n, n, 88)

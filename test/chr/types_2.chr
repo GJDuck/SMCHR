@@ -1,0 +1,3 @@
+type p(var of num, var  of nil, var of atom, var of str, bool);
+type passed(num);
+p(0, nil, @atom, "string", true) <=> passed(0);

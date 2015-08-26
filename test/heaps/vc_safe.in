@@ -1,0 +1,1 @@
+sep(h0, c0, r0) /\ one(c0, p, w) /\ sep(h1, c1, h0) /\ one(c1, q, v0) /\ sep(h1, c2, r1) /\ one(c2, p, v1) /\ one(c3, p, v2) /\ sep(h2, c3, r1) /\ sep(h2, c4, r2) /\ one(c4, q, v3) /\ one(c5, q, v4) /\ sep(h3, c5, r2) /\ sep(h3, c6, r3) /\ one(c6, p, v5) /\ v5 != v2

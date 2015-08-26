@@ -1,0 +1,5 @@
+type p(var of num);
+type q(var of num, var of num, var of num, var of num, num);
+type passed(var of num);
+p(x) <=> q(x, y, z, z, 7);
+q(x, y, z, z, 7) <=> passed(x);

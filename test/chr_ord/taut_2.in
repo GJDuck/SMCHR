@@ -1,0 +1,1 @@
+not (leq(x, y) \/ x = y \/ leq(y, x))

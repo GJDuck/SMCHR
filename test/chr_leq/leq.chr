@@ -1,0 +1,3 @@
+leq(x, x) <=> true;
+leq(x, y) /\ leq(y, x) ==> x = y;
+leq(x, y) /\ leq(y, z) ==> leq(x, z);

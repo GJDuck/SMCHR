@@ -1,0 +1,1 @@
+dom(H, p) /\ sub(H, I) /\ not dom(I, p)

@@ -1,0 +1,1 @@
+int_eq_c(x, c) /\ int_eq_c(y, c) ==> x = y;

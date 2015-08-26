@@ -1,0 +1,1 @@
+set_elem(s, x) /\ set_elem(s, y) /\ set_elem(s, z) /\ x != y /\ y != z /\ x != z /\ set_cup(s, s1, s2) /\ set_cup(s2, s3, s4) /\ set_cup(s4, s5, s6) /\ set_cup(s6, s7, s8) /\ set_cup(s8, s9, sa) /\ set_emp(s1) /\ set_one(s3, a) /\ set_emp(s5) /\ set_one(s7, b) /\ set_emp(s9) /\ set_emp(sa)

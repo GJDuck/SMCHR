@@ -1,0 +1,1 @@
+(one(i, s, t) /\ one(j, s, u) /\ sep(h1, i, _) /\ sep(h2, j, _) \/ sep(k, h1, h2) /\ (one(i_, s_, t_) /\ one(j_, s_, u_) /\ sep(k, i_, _) /\ sep(h, j_, _) /\ t_ != u_ \/ sep(k, k_, i1_) /\ sep(h, k_, i2_) /\ sep(l_, i1_, i2_) /\ (one(m_, _, _) /\ sep(l_, m_, _)))) /\ sep(h, h1, h2)

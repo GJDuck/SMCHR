@@ -1,0 +1,1 @@
+emp(T_1) /\ sep(H, H_0, T_1) /\ one(T_2, x, v0) /\ sep(H_1, T_2, H_0) /\ one(T_3, x, v1) /\ sep(H_1, T_3, Heap) /\ ((one(T_4, s, t) /\ one(T_5, s, u) /\ sep(H, T_4, T_6) /\ sep(Heap, T_5, T_7) /\ t != u) \/ (sep(H, T_8, T_9) /\ sep(Heap, T_8, T_10) /\ sep(T_11, T_9, T_10) /\ one(T_12, x, y) /\ sep(T_11, T_12, T_13)))

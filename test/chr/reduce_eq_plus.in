@@ -1,0 +1,1 @@
+eq_plus(x, y, y) /\ eq_plus(a, b, a) /\ eq_plus(n, n, m)

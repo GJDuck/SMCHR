@@ -1,0 +1,1 @@
+sep(h1, c1, h) /\ one(c1, x1, v) /\ sep(h1, c2, h2) /\ one(c2, x1, w) /\ ((in(h, s, t) /\ not in(h2, s, t)) \/ (in(h2, s, t) /\ not in(h, s, t))) 
