@@ -35,7 +35,7 @@
 /*
  * Function type information.
  */
-MAP_DECL(siginfo, atom_t, typesig_t, compare_atom);
+MAP_DECL(tsiginfo, atom_t, typesig_t, compare_atom);
 
 /*
  * Variable type information.
@@ -54,7 +54,7 @@ struct context_s
 {
     const char *file;
     size_t line;
-    siginfo_t tinfo;
+    tsiginfo_t tinfo;
     typeinfo_t vinfo;
     bool error;
 };
@@ -63,7 +63,7 @@ typedef struct context_s *context_t;
 /*
  * Globals.
  */
-static siginfo_t tinfo;
+static tsiginfo_t tinfo;
 
 /*
  * Prototypes.
@@ -128,7 +128,7 @@ extern typeinst_t typecheck_typeof(typeinfo_t info, term_t t)
         {
             func_t f = func(t);
             typesig_t sig;
-            if (siginfo_search(tinfo, f->atom, &sig))
+            if (tsiginfo_search(tinfo, f->atom, &sig))
                 return typeinst_make_ground(sig->type);
             return TYPEINST_ANY;
         }
@@ -218,7 +218,7 @@ static bool typecheck_term(context_t cxt, term_t t, typeinst_t type)
                     typeinst_show(tx), typeinst_show(ty));
                 return false;
             }
-            if (siginfo_search(cxt->tinfo, f->atom, &sig))
+            if (tsiginfo_search(cxt->tinfo, f->atom, &sig))
             {
                 if (!typecheck_expect(cxt, t, type, typeinst_decl_type(sig)))
                     ok = false;
@@ -310,7 +310,7 @@ static void typecheck_unify(context_t cxt, var_t x, var_t y)
 extern typesig_t typeinst_lookup_typesig(atom_t atom)
 {
     typesig_t sig = TYPESIG_DEFAULT;
-    siginfo_search(tinfo, atom, &sig);
+    tsiginfo_search(tinfo, atom, &sig);
     return sig;
 }
 
@@ -423,7 +423,7 @@ typesig_eq_default_check:
  */
 extern void typecheck_init(void)
 {
-    siginfo_t info = siginfo_init();
+    tsiginfo_t info = tsiginfo_init();
 
     typesig_t sig_bb  = make_typesig(TYPEINST_BOOL, TYPEINST_BOOL);
     typesig_t sig_bbb = make_typesig(TYPEINST_BOOL, TYPEINST_BOOL,
@@ -433,24 +433,24 @@ extern void typecheck_init(void)
     typesig_t sig_nn = make_typesig(TYPEINST_NUM, TYPEINST_NUM);
     typesig_t sig_nnn = make_typesig(TYPEINST_NUM, TYPEINST_NUM, TYPEINST_NUM);
 
-    info = siginfo_destructive_insert(info, ATOM_NOT, sig_bb);
-    info = siginfo_destructive_insert(info, ATOM_AND, sig_bbb);
-    info = siginfo_destructive_insert(info, ATOM_OR, sig_bbb);
-    info = siginfo_destructive_insert(info, ATOM_IMPLIES, sig_bbb);
-    info = siginfo_destructive_insert(info, ATOM_IFF, sig_bbb);
-    info = siginfo_destructive_insert(info, ATOM_XOR, sig_bbb);
-    info = siginfo_destructive_insert(info, ATOM_LT, sig_bnn);
-    info = siginfo_destructive_insert(info, ATOM_LEQ, sig_bnn);
-    info = siginfo_destructive_insert(info, ATOM_GT, sig_bnn);
-    info = siginfo_destructive_insert(info, ATOM_GEQ, sig_bnn);
-    info = siginfo_destructive_insert(info, ATOM_NEG, sig_nn);
-    info = siginfo_destructive_insert(info, ATOM_ADD, sig_nnn);
-    info = siginfo_destructive_insert(info, ATOM_SUB, sig_nnn);
-    info = siginfo_destructive_insert(info, ATOM_MUL, sig_nnn);
-    info = siginfo_destructive_insert(info, ATOM_DIV, sig_nnn);
+    info = tsiginfo_destructive_insert(info, ATOM_NOT, sig_bb);
+    info = tsiginfo_destructive_insert(info, ATOM_AND, sig_bbb);
+    info = tsiginfo_destructive_insert(info, ATOM_OR, sig_bbb);
+    info = tsiginfo_destructive_insert(info, ATOM_IMPLIES, sig_bbb);
+    info = tsiginfo_destructive_insert(info, ATOM_IFF, sig_bbb);
+    info = tsiginfo_destructive_insert(info, ATOM_XOR, sig_bbb);
+    info = tsiginfo_destructive_insert(info, ATOM_LT, sig_bnn);
+    info = tsiginfo_destructive_insert(info, ATOM_LEQ, sig_bnn);
+    info = tsiginfo_destructive_insert(info, ATOM_GT, sig_bnn);
+    info = tsiginfo_destructive_insert(info, ATOM_GEQ, sig_bnn);
+    info = tsiginfo_destructive_insert(info, ATOM_NEG, sig_nn);
+    info = tsiginfo_destructive_insert(info, ATOM_ADD, sig_nnn);
+    info = tsiginfo_destructive_insert(info, ATOM_SUB, sig_nnn);
+    info = tsiginfo_destructive_insert(info, ATOM_MUL, sig_nnn);
+    info = tsiginfo_destructive_insert(info, ATOM_DIV, sig_nnn);
 
     if (!gc_root(&tinfo, sizeof(tinfo)))
-        panic("failed to register GC root for siginfo map: %s",
+        panic("failed to register GC root for tsiginfo map: %s",
             strerror(errno));
 
     tinfo = info;
@@ -464,7 +464,7 @@ extern bool typeinst_declare(atom_t atom, typesig_t sig)
     if (sig == TYPESIG_DEFAULT)     // XXX: DEFAULT overwritable?
         return true;
     typesig_t sig_0;
-    if (siginfo_search(tinfo, atom, &sig_0))
+    if (tsiginfo_search(tinfo, atom, &sig_0))
     {
         if (sig == sig_0)
             return true;
@@ -477,7 +477,7 @@ extern bool typeinst_declare(atom_t atom, typesig_t sig)
         }
         return true;
     }
-    tinfo = siginfo_destructive_insert(tinfo, atom, sig);
+    tinfo = tsiginfo_destructive_insert(tinfo, atom, sig);
     return true;
 }
 
@@ -487,7 +487,7 @@ extern bool typeinst_declare(atom_t atom, typesig_t sig)
 extern typesig_t typeinst_get_decl(atom_t atom)
 {
     typesig_t sig = TYPESIG_DEFAULT;
-    siginfo_search(tinfo, atom, &sig);
+    tsiginfo_search(tinfo, atom, &sig);
     return sig;
 }
 
