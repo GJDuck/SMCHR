@@ -239,11 +239,8 @@ static void *gc_get_stackbottom(void)
     stackbottom = (void *)gc_stacktop();
     stackbottom = (void *)(((uintptr_t)(stackbottom + GC_PAGESIZE)
         / GC_PAGESIZE) * GC_PAGESIZE);
+#ifndef __APPLE__
     unsigned char vec;
-#ifdef __APPLE__
-    while (mincore(stackbottom, GC_PAGESIZE, &vec) == 0 && vec != 0)
-        stackbottom += GC_PAGESIZE;
-#else       /* __APPLE__ */
     while (mincore(stackbottom, GC_PAGESIZE, &vec) == 0)
         stackbottom += GC_PAGESIZE;
     if (errno != ENOMEM)
