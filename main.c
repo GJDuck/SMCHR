@@ -1,6 +1,6 @@
 /*
  * main.c
- * Copyright (C) 2014 National University of Singapore
+ * Copyright (C) 2018 National University of Singapore
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -368,7 +368,7 @@ static void print_banner(const char *progname)
     message("!m\\__ \\ | | | |!r | |___|  _  |  _ <");
     message("!m|___/_| |_| |_|!r\\____|_| |_|_| \\_\\!d [Version "
         STRING(VERSION) "]");
-    message("(C) 2014, all rights reserved.");
+    message("(C) 2018, all rights reserved.");
     message("Try `%s --help' or `:help' for more information.\n\n", progname);
 }
 

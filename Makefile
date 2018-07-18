@@ -18,7 +18,7 @@ UNAME=$(shell uname)
 ifeq ($(UNAME), Darwin)
     LDFLAGS=-Wl,-stack_size,8000000
 else
-    LDFLAGS=-Wl,--gc-sections -rdynamic
+    LDFLAGS=-Wl,--gc-sections -rdynamic -pthread
 endif
 
 # CPU=VINTAGE_AMD64

@@ -1,6 +1,6 @@
 /*
  * gc.c
- * Copyright (C) 2013
+ * Copyright (C) 2018
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -233,22 +233,32 @@ static int gc_protect_memory(void *ptr, size_t size)
     void *ptr1 = (void *)(((uintptr_t)ptr / GC_PAGESIZE) * GC_PAGESIZE);
     return mprotect(ptr1, size + (ptr-ptr1), PROT_READ | PROT_WRITE);
 }
+#ifdef __APPLE__
 static void *gc_get_stackbottom(void)
 {
-    void *stackbottom;
+    // TODO: this code is likely broken.
     stackbottom = (void *)gc_stacktop();
     stackbottom = (void *)(((uintptr_t)(stackbottom + GC_PAGESIZE)
         / GC_PAGESIZE) * GC_PAGESIZE);
-#ifndef __APPLE__
-    unsigned char vec;
-    while (mincore(stackbottom, GC_PAGESIZE, &vec) == 0)
-        stackbottom += GC_PAGESIZE;
-    if (errno != ENOMEM)
-        return false;
-#endif      /* __APPLE__ */
     stackbottom -= sizeof(void *);
     return stackbottom;
 }
+#else       /* __APPLE__ */
+#include <pthread.h>
+int pthread_getattr_np(pthread_t thread, pthread_attr_t *attr);
+static void *gc_get_stackbottom(void)
+{
+    pthread_t thread = pthread_self();
+    pthread_attr_t attr;
+    if (pthread_getattr_np(thread, &attr) != 0)
+        return NULL;
+    void *stackbottom;
+    size_t stacksize;
+    if (pthread_attr_getstack(&attr, &stackbottom, &stacksize) != 0)
+        return NULL;
+    return stackbottom + stacksize;
+}
+#endif      /* __APPLE__ */
 #endif      /* __MINGW32__ */
 
 /*
@@ -281,6 +291,8 @@ extern bool GC_init(void)
 
     // Find the stack:
     gc_stackbottom = gc_get_stackbottom();
+    if (gc_stackbottom == NULL)
+        goto init_error;
     
     // Reserve a large chunk of the virtual address space for the GC.
     void *gc_memory = gc_get_memory();
