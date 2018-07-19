@@ -11,13 +11,13 @@ set -x
 # Nb: MacOSX version must be built separately.
 MAKEFILE=Makefile
 make -f $MAKEFILE clean
-make -f $MAKEFILE -j4 smchr
+make -f $MAKEFILE -j4 smchr CPU=VINTAGE_AMD64
 make -f $MAKEFILE clean
-make -f $MAKEFILE -j4 smchr.windows
+#make -f $MAKEFILE -j4 smchr.windows
+#make -f $MAKEFILE clean
+make -f $MAKEFILE answer CPU=VINTAGE_AMD64
 make -f $MAKEFILE clean
-make -f $MAKEFILE answer
-make -f $MAKEFILE clean
-make -f $MAKEFILE flatzinc
+make -f $MAKEFILE flatzinc CPU=VINTAGE_AMD64
 mv answer answer.linux
 mv flatzinc flatzinc.linux
 
@@ -29,7 +29,7 @@ mv flatzinc flatzinc.linux
 rm -rf "$INSTALL"
 mkdir -p "$INSTALL"
 cp smchr "$INSTALL"/smchr.linux
-cp smchr.exe "$INSTALL"
+#cp smchr.exe "$INSTALL"
 HAVE_MACOSX=yes
 if [ -e smchr.macosx ]
 then

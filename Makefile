@@ -22,7 +22,7 @@ else
 endif
 
 # CPU=VINTAGE_AMD64
-CPU=MODERN_AMD64
+CPU ?= MODERN_AMD64
 
 CC=gcc
 PROG=smchr
