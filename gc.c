@@ -290,12 +290,13 @@ extern bool GC_init(void)
     }
 
     // Find the stack:
+    void *gc_memory = NULL;
     gc_stackbottom = gc_get_stackbottom();
     if (gc_stackbottom == NULL)
         goto init_error;
     
     // Reserve a large chunk of the virtual address space for the GC.
-    void *gc_memory = gc_get_memory();
+    gc_memory = gc_get_memory();
     if (gc_memory != GC_MEMORY)
         goto init_error;
 
